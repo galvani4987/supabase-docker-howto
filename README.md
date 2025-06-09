@@ -6,14 +6,14 @@ This guide details the process of installing and configuring self-hosted Supabas
 
 ## Table of Contents
 
-1.  [Introduction and Prerequisites](https://www.google.com/search?q=%231-introduction-and-prerequisites)
-2.  [Server Preparation](https://www.google.com/search?q=%232-server-preparation)
-3.  [Docker and Docker Compose Installation](https://www.google.com/search?q=%233-docker-and-docker-compose-installation)
-4.  [Supabase Core Installation](https://www.google.com/search?q=%234-supabase-core-installation)
-5.  [Generating Supabase Keys](https://www.google.com/search?q=%235-generating-supabase-keys)
-6.  [Security Configuration (Firewall)](https://www.google.com/search?q=%236-security-configuration-firewall)
-7.  [Nginx Reverse Proxy & HTTPS (Let's Encrypt)](https://www.google.com/search?q=%237-nginx-reverse-proxy--https-lets-encrypt)
-8.  [Modified Configuration Files (Examples)](https://www.google.com/search?q=%238-modified-configuration-files-examples)
+1.  Introduction and Prerequisites
+2.  Server Preparation
+3.  Docker and Docker Compose Installation
+4.  Supabase Core Installation
+5.  Generating Supabase Keys
+6.  Security Configuration (Firewall)
+7.  Nginx Reverse Proxy & HTTPS (Let's Encrypt)
+8.  Modified Configuration Files (Examples)
 
 -----
 
