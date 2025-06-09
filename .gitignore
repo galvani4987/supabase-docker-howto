@@ -1,0 +1,16 @@
+# Ignora o arquivo .env com credenciais
+.env
+
+# Ignora volumes do Docker que contêm dados e configs
+volumes/db/data/
+volumes/storage/
+
+# Ignora ambientes virtuais Python
+*.venv/
+venv/
+env/
+__pycache__/
+
+# Ignora logs e temporários
+*.log
+*.tmp
