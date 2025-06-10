@@ -33,7 +33,7 @@ Connect to your server and ensure all packages are up-to-date.
 
 ```bash
 sudo apt update && sudo apt upgrade -y
-```bash
+```
 
 ---
 
@@ -44,31 +44,31 @@ Supabase uses Docker to orchestrate its microservices.
 1.  **Install Docker dependencies:**
     ```bash
     sudo apt install ca-certificates curl apt-transport-https software-properties-common -y
-    ```bash
+    ```
 
 2.  **Add Docker's official GPG key:**
     ```bash
     sudo install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    ```bash
+    ```
 
 3.  **Set up the Docker repository:**
     ```bash
     echo \
       "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
       $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    ```bash
+    ```
 
 4.  **Install Docker Engine and Docker Compose:**
     ```bash
     sudo apt update
     sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-    ```bash
+    ```
 
 5.  **Add your user to the `docker` group to run Docker commands without `sudo`:**
     ```bash
     sudo usermod -aG docker ${USER}
-    ```bash
+    ```
     > **IMPORTANT:** You must log out and log back into your SSH session for this change to take effect. Afterwards, verify by running `docker ps`.
 
 ---
@@ -80,17 +80,17 @@ In this step, we will prepare all secrets and configurations *before* launching 
 1.  **Clone the official Supabase repository:**
     ```bash
     git clone --depth 1 https://github.com/supabase/supabase
-    ```bash
+    ```
 
 2.  **Navigate into the `docker` directory:**
     ```bash
     cd supabase/docker
-    ```bash
+    ```
 
 3.  **Copy the example environment file:**
     ```bash
     cp .env.example .env
-    ```bash
+    ```
 
 4.  **Generate all required keys and secrets:**
     Execute the commands below and save each output.
@@ -98,51 +98,50 @@ In this step, we will prepare all secrets and configurations *before* launching 
     * **Generate `POSTGRES_PASSWORD`:**
         ```bash
         openssl rand -base64 32
-        ```bash
+        ```
     * **Generate `JWT_SECRET`:**
         ```bash
         openssl rand -hex 32
-        ```bash
+        ```
     * **Generate `VAULT_ENC_KEY` (CRITICAL for ARM64):**
+        ```
         # The Supavisor requires a key of exactly 32 alphanumeric bytes.
+        ```
         ```bash
         openssl rand -base64 48 | tr -dc 'A-Za-z0-9' | head -c32; echo
-        ```bash
+        ```
 
 5.  **Update the `.env` file with the generated keys:**
+    ```
     # Open the .env file for editing.
+    ```
     ```bash
     nano .env
-    ```bash
-    # Locate and replace the values for the following variables with the keys you just generated.
-    # Also, set a password for the dashboard and define your final public URL.
-    # - POSTGRES_PASSWORD=
-    # - JWT_SECRET=
-    # - VAULT_ENC_KEY=
-    # - DASHBOARD_PASSWORD=YourStudioPassword
-    # - SITE_URL=https://supabase.your-domain.com
-    # - API_EXTERNAL_URL=https://supabase.your-domain.com
-    # - SUPABASE_PUBLIC_URL=https://supabase.your-domain.com
+    ```
+    Locate and replace the values for the following variables with the keys you just generated. Also, set a password for the dashboard and define your final public URL.
+    * `POSTGRES_PASSWORD=`
+    * `JWT_SECRET=`
+    * `VAULT_ENC_KEY=`
+    * `DASHBOARD_PASSWORD=YourStudioPassword`
+    * `SITE_URL=https://supabase.your-domain.com`
+    * `API_EXTERNAL_URL=https://supabase.your-domain.com`
+    * `SUPABASE_PUBLIC_URL=https://supabase.your-domain.com`
 
 6.  **Generate `ANON_KEY` and `SERVICE_ROLE_KEY`:**
-    # These keys are JWTs signed with your JWT_SECRET.
-    # First, edit the provided Python script to include your secret.
-    # (Adjust the path if you cloned your 'supabase-docker-howto' repo elsewhere).
+    These keys are JWTs signed with your JWT_SECRET. First, edit the provided Python script to include your secret. (Adjust the path if you cloned your 'supabase-docker-howto' repo elsewhere).
     ```bash
     nano ../../generate_keys.py
-    ```bash
-    # Paste your `JWT_SECRET` inside the quotes for the `jwt_secret` variable in the script.
-    # Then, install the dependency and run the script.
+    ```
+    Paste your `JWT_SECRET` inside the quotes for the `jwt_secret` variable in the script. Then, install the dependency and run the script.
     ```bash
     sudo apt install python3-pip -y
     pip install pyjwt
     python3 ../../generate_keys.py
-    ```bash
-    # The script will print the ANON_KEY and SERVICE_ROLE_KEY.
+    ```
+    The script will print the ANON_KEY and SERVICE_ROLE_KEY.
 
 7.  **Add the final keys to the `.env` file:**
-    # Open the .env file one last time (`nano .env`).
-    # Paste the generated values for `ANON_KEY` and `SERVICE_ROLE_KEY`. Save the file.
+    Open the .env file one last time (`nano .env`). Paste the generated values for `ANON_KEY` and `SERVICE_ROLE_KEY`. Save the file.
 
 Your `.env` file is now complete.
 
@@ -153,15 +152,17 @@ Your `.env` file is now complete.
 With all configurations in place, we can now start the services.
 
 1.  **Launch the containers:**
+    ```
     # Ensure you are in the `~/supabase/docker` directory.
+    ```
     ```bash
     docker compose up -d
-    ```bash
+    ```
 2.  **Check the status:**
     ```bash
     docker compose ps
-    ```bash
-    # Wait a few minutes. All services should eventually show the status `Up (healthy)` or `Up`.
+    ```
+    Wait a few minutes. All services should eventually show the status `Up (healthy)` or `Up`.
 
 ---
 
@@ -170,8 +171,7 @@ With all configurations in place, we can now start the services.
 Secure your server by allowing only necessary traffic.
 
 1.  **Oracle Cloud Firewall (Security List):**
-    # In the OCI dashboard, add Ingress Rules for ports TCP/80 (HTTP) and TCP/443 (HTTPS).
-    # The source should be `0.0.0.0/0`. Port TCP/22 (SSH) should already be allowed.
+    In the OCI dashboard, add Ingress Rules for ports TCP/80 (HTTP) and TCP/443 (HTTPS). The source should be `0.0.0.0/0`. Port TCP/22 (SSH) should already be allowed.
 
 2.  **Local Firewall (UFW):**
     ```bash
@@ -180,7 +180,7 @@ Secure your server by allowing only necessary traffic.
     sudo ufw allow 443/tcp
     sudo ufw enable
     sudo ufw status
-    ```bash
+    ```
 
 ---
 
@@ -191,15 +191,14 @@ Nginx will manage external traffic and SSL.
 1.  **Install Nginx:**
     ```bash
     sudo apt install nginx -y
-    ```bash
+    ```
 
 2.  **Create the Nginx config file for Supabase:**
     ```bash
     sudo nano /etc/nginx/sites-available/supabase.your-domain.com
-    ```bash
+    ```
 
-3.  **Paste the initial HTTP configuration below.**
-    # This is required for Certbot to perform its validation.
+3.  **Paste the initial HTTP configuration below.** This is required for Certbot to perform its validation.
     ```nginx
     server {
         listen 80;
@@ -215,7 +214,6 @@ Nginx will manage external traffic and SSL.
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "Upgrade"; 
-            # Essential for WebSockets
         }
     }
     ```
@@ -224,28 +222,27 @@ Nginx will manage external traffic and SSL.
     ```bash
     sudo ln -s /etc/nginx/sites-available/supabase.your-domain.com /etc/nginx/sites-enabled/
     sudo nginx -t
-    ```bash
-    # If the test is successful (`syntax is ok`), reload Nginx.
+    ```
+    If the test is successful (`syntax is ok`), reload Nginx.
     ```bash
     sudo systemctl reload nginx
-    ```bash
+    ```
 
 5.  **Install Certbot and its Nginx plugin:**
     ```bash
     sudo apt install certbot python3-certbot-nginx -y
-    ```bash
+    ```
 
 6.  **Obtain the SSL certificate:**
     ```bash
     sudo certbot --nginx -d supabase.your-domain.com
-    ```bash
-    # Follow the on-screen prompts. Provide your email and choose the `Redirect` option
-    # to enforce HTTPS. Certbot will automatically update your Nginx configuration.
+    ```
+    Follow the on-screen prompts. Provide your email and choose the `Redirect` option to enforce HTTPS. Certbot will automatically update your Nginx configuration.
 
 7.  **Reload Nginx one last time:**
     ```bash
     sudo systemctl reload nginx
-    ```bash
+    ```
 
 ---
 
